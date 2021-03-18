@@ -14,6 +14,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-rest-client'
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-resteasy'
+    implementation group: 'io.quarkus', name: 'quarkus-resteasy-jackson', version: '0.24.0'
+    compile group: 'jakarta.jws', name: 'jakarta.jws-api', version: '1.1.1'
+    implementation group: 'org.json', name: 'json', version: '20210307'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 }
