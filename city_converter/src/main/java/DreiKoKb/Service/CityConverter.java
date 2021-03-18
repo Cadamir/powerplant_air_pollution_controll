@@ -6,14 +6,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.Locale;
 import java.util.Scanner;
+import org.json.JSONObject;
 
 @Path("/cityconvert")
 public class CityConverter {
-    public final static String fullCityChangerFile = "C:/Users/User/Documents/GitHub/powerplant_air_pollution_controll/city_converter/cityList/city.list.json.txt";
-    //public final static String germanCityChangerFile;
+    public final static String fullCityChangerFile = "C:/Users/User/Documents/GitHub/powerplant_air_pollution_controll/city_converter/cityList/cityfull.txt";
+    public final static String germanCityChangerFile = "C:/Users/User/Documents/GitHub/powerplant_air_pollution_controll/city_converter/cityList/citygerman.txt";
 
     @Path("/version")
     @GET
@@ -25,17 +28,19 @@ public class CityConverter {
     @Path("/cityname={city}")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String city(@PathParam("city") String city){
+    public JSONObject city(@PathParam("city") String city){
+        String response = "";
         try{
-            String response = "";
-            File file = new File(fullCityChangerFile);
-            Scanner myReader = new Scanner(file);
-            return myReader.nextLine();/*
+
+            //File file = new File(fullCityChangerFile);
+            //return Long.toString(file.length());
+
+            BufferedReader myReader = new BufferedReader(new FileReader(fullCityChangerFile));
+            myReader.mark(41700915);
             int lineCounter = 0;
             String line;
-            while(myReader.hasNextLine()){
-                line = myReader.nextLine().toLowerCase(Locale.ROOT);
-                response = line;
+            while((line = myReader.readLine())!= null){
+                line = line.toLowerCase();
                 if(line.contains("\""+city+"\"")) break;
                 lineCounter++;
             }
@@ -43,16 +48,60 @@ public class CityConverter {
             myReader.reset();
 
             for(int i = 0; i < lineCounter-2; i++)
-                myReader.nextLine();
+                myReader.readLine();
 
 
 
-            for(int i = 0; i < 9; i++){
-                response = response + myReader.nextLine();
+            for(int i = 0; i < 10; i++){
+                response = response + myReader.readLine();
             }
-            return response;*/
+
+        }catch (Exception e){
+
+        }
+       return new JSONObject(response);
+    }
+
+    @GET
+    @Path("/lat={lati}&lon={longi}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String nearestCity(@PathParam("lati") double lati, @PathParam("longi") double longi){
+        String response = "";
+        try{
+            BufferedReader myReader = new BufferedReader(new FileReader(germanCityChangerFile));
+            myReader.mark(41700915);
+            String line = "";
+            String lastLine = "";
+            int lineCounter = 0;
+            int goodLine = 1;
+            double closestDistance = 9999999;
+            while((line = myReader.readLine())!=null){
+                if(line.contains("\"lat\":") && lastLine.contains("\"lon\":")){
+
+                    double lat = Double.parseDouble(line.replace("\"lat\": ", "").replace(",", ""));
+                    double lon = Double.parseDouble(lastLine.replace("\"lon\":", "").replace(",", ""));
+                    double distance = Math.sqrt((lati-lat)*(lati-lat)+(longi-lon)*(longi-lon));
+
+                    if(distance < closestDistance){
+                        goodLine = lineCounter - 7;
+                        closestDistance = distance;
+
+                    }
+
+                }
+
+                lineCounter++;
+                lastLine = line;
+            }
+            myReader.reset();
+            for(int i = 0; i < goodLine; i++)
+                myReader.readLine();
+            for(int i = 0; i < 10; i++){
+                response = response + myReader.readLine();
+            }
         }catch (Exception e){
             return e.getMessage();
         }
+        return  (response);
     }
 }
