@@ -5,12 +5,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.util.Locale;
-import java.util.Scanner;
 import org.json.JSONObject;
 
 @Path("/cityconvert")
@@ -57,7 +53,7 @@ public class CityConverter {
             }
 
         }catch (Exception e){
-
+            e.getMessage();
         }
        return new JSONObject(response);
     }
