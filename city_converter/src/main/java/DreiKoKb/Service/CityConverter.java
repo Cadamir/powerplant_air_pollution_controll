@@ -25,11 +25,11 @@ public class CityConverter {
         return "version";
     }
 
-    @Path("/cityname={city}")
+    @Path("/legacycityname={city}")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public JSONObject city(@PathParam("city") String city){
-        String response = "";
+        StringBuilder response = new StringBuilder();
         try{
             BufferedReader myReader = new BufferedReader(new FileReader(System.getProperty("user.dir") + fullCityChangerFile));
             myReader.mark(41700915);
@@ -49,26 +49,26 @@ public class CityConverter {
 
 
             for(int i = 0; i < 10; i++){
-                response = response + myReader.readLine();
+                response.append(myReader.readLine());
             }
 
         }catch (Exception e){
             System.out.println(e.getMessage());
             System.out.println(System.getProperty("user.dir"));
-            response = "{\"empty\": \"true\"}";
+            response = new StringBuilder("{\"empty\": \"true\"}");
         }
-       return new JSONObject(response);
+       return new JSONObject(response.toString());
     }
 
     @GET
     @Path("/lat={lati}&lon={longi}")
     @Produces(MediaType.APPLICATION_JSON)
     public String nearestCity(@PathParam("lati") double lati, @PathParam("longi") double longi){
-        String response = "";
+        StringBuilder response = new StringBuilder();
         try{
             BufferedReader myReader = new BufferedReader(new FileReader(germanCityChangerFile));
             myReader.mark(41700915);
-            String line = "";
+            String line;
             String lastLine = "";
             int lineCounter = 0;
             int goodLine = 1;
@@ -95,19 +95,19 @@ public class CityConverter {
             for(int i = 0; i < goodLine; i++)
                 myReader.readLine();
             for(int i = 0; i < 10; i++){
-                response = response + myReader.readLine();
+                response.append(myReader.readLine());
             }
         }catch (Exception e){
             return e.getMessage();
         }
-        return  (response);
+        return  (response.toString());
     }
 
     @Path("/coolcityname={city}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response cityCool(@PathParam("city") String city){
-        String response = "";
+        StringBuilder response = new StringBuilder();
         try{
             InputStream in = getClass().getResourceAsStream("/cityList/cityfull.txt");
             BufferedReader myReader = new BufferedReader(new InputStreamReader(in));
@@ -116,7 +116,7 @@ public class CityConverter {
             String line;
             while((line = myReader.readLine())!= null){
                 line = line.toLowerCase();
-                if(line.contains("\""+city+"\"")) break;
+                if(line.contains("\""+city.toLowerCase()+"\"")) break;
                 lineCounter++;
             }
 
@@ -128,16 +128,19 @@ public class CityConverter {
 
 
             for(int i = 0; i < 10; i++){
-                response = response + myReader.readLine();
+                response.append(myReader.readLine());
             }
-            JSONObject object = new JSONObject(response);
-            System.out.println(object.toString());
+            JSONObject object = new JSONObject(response.toString());
             return Response.ok(object.toString()).build();
         }catch (Exception e){
             System.out.println(e.getMessage());
             System.out.println(System.getProperty("user.dir"));
-            response = "{\"empty\": \"true\"}";
+            response = new StringBuilder(
+                    "{\n" + "\"id\": -1,\n" + "\"name\": \"-1\",\n" + "\"state\": \"-1\",\n" + "\"country\": \"-1\",\n" + "\"coord\": {\n" + "\"lon\": -1.0,\n" + "\"lat\": -1.0\n" + "}\n" + "}"
+            );
+            JSONObject object = new JSONObject(response.toString());
+            return Response.ok(object.toString()).build();
         }
-        return null;
+
     }
 }
