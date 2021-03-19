@@ -9,6 +9,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.glassfish:javax.json:1.0.4'
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-rest-client-jackson'
     implementation 'io.quarkus:quarkus-rest-client'
