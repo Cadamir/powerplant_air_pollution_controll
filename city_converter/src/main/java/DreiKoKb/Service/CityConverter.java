@@ -11,8 +11,8 @@ import org.json.JSONObject;
 
 @Path("/cityconvert")
 public class CityConverter {
-    public final static String fullCityChangerFile = "C:/Users/User/Documents/GitHub/powerplant_air_pollution_controll/city_converter/cityList/cityfull.txt";
-    public final static String germanCityChangerFile = "C:/Users/User/Documents/GitHub/powerplant_air_pollution_controll/city_converter/cityList/citygerman.txt";
+    public final static String fullCityChangerFile = "/../../../resources/main/citylist/cityfull.txt";
+    public final static String germanCityChangerFile = "C:/Users/User/Documents/GitHub/powerplant_air_pollution_controll/city_converter/src/main/resources/cityList/cityfull.txt";
 
     @Path("/version")
     @GET
@@ -27,11 +27,7 @@ public class CityConverter {
     public JSONObject city(@PathParam("city") String city){
         String response = "";
         try{
-
-            //File file = new File(fullCityChangerFile);
-            //return Long.toString(file.length());
-
-            BufferedReader myReader = new BufferedReader(new FileReader(fullCityChangerFile));
+            BufferedReader myReader = new BufferedReader(new FileReader(System.getProperty("user.dir") + fullCityChangerFile));
             myReader.mark(41700915);
             int lineCounter = 0;
             String line;
@@ -53,7 +49,9 @@ public class CityConverter {
             }
 
         }catch (Exception e){
-            e.getMessage();
+            System.out.println(e.getMessage());
+            System.out.println(System.getProperty("user.dir"));
+            response = "{\"empty\": \"true\"}";
         }
        return new JSONObject(response);
     }
