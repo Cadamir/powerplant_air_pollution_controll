@@ -1,9 +1,6 @@
 package DreiKoKb.Service;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.BufferedReader;
@@ -15,8 +12,8 @@ import org.json.JSONObject;
 
 @Path("/cityconvert")
 public class CityConverter {
-    public final static String fullCityChangerFile = "/../../../resources/main/citylist/cityfull.txt";
-    public final static String germanCityChangerFile = "/../../../resources/main/citylist/citygerman.txt";
+    public final static String fullCityChangerFile = "/cityList/cityfull.txt";
+    public final static String germanCityChangerFile = "/cityList/citygerman.txt";
 
     @Path("/version")
     @GET
@@ -61,12 +58,13 @@ public class CityConverter {
     }
 
     @GET
-    @Path("/lat={lati}&lon={longi}")
+    @Path("/coord")
     @Produces(MediaType.APPLICATION_JSON)
-    public String nearestCity(@PathParam("lati") double lati, @PathParam("longi") double longi){
+    public String nearestCity(@QueryParam("lat") double lati, @QueryParam("lon") double longi){
         StringBuilder response = new StringBuilder();
         try{
-            BufferedReader myReader = new BufferedReader(new FileReader(germanCityChangerFile));
+            InputStream in = getClass().getResourceAsStream(germanCityChangerFile);
+            BufferedReader myReader = new BufferedReader(new InputStreamReader(in));
             myReader.mark(41700915);
             String line;
             String lastLine = "";
@@ -103,13 +101,13 @@ public class CityConverter {
         return  (response.toString());
     }
 
-    @Path("/coolcityname={city}")
+    @Path("/city")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cityCool(@PathParam("city") String city){
+    public Response cityCool(@QueryParam("cityName") String city){
         StringBuilder response = new StringBuilder();
         try{
-            InputStream in = getClass().getResourceAsStream("/cityList/cityfull.txt");
+            InputStream in = getClass().getResourceAsStream(fullCityChangerFile);
             BufferedReader myReader = new BufferedReader(new InputStreamReader(in));
             myReader.mark(41700915);
             int lineCounter = 0;
@@ -124,8 +122,6 @@ public class CityConverter {
 
             for(int i = 0; i < lineCounter-2; i++)
                 myReader.readLine();
-
-
 
             for(int i = 0; i < 10; i++){
                 response.append(myReader.readLine());
