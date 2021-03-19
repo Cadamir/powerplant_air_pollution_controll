@@ -5,6 +5,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -104,8 +105,8 @@ public class CityConverter {
 
     @Path("/coolcityname={city}")
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public JSONObject cityCool(@PathParam("city") String city){
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cityCool(@PathParam("city") String city){
         String response = "";
         try{
             InputStream in = getClass().getResourceAsStream("/cityList/cityfull.txt");
@@ -129,12 +130,14 @@ public class CityConverter {
             for(int i = 0; i < 10; i++){
                 response = response + myReader.readLine();
             }
-
+            JSONObject object = new JSONObject(response);
+            System.out.println(object.toString());
+            return Response.ok(object.toString()).build();
         }catch (Exception e){
             System.out.println(e.getMessage());
             System.out.println(System.getProperty("user.dir"));
             response = "{\"empty\": \"true\"}";
         }
-        return new JSONObject(response);
+        return null;
     }
 }
