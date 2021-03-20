@@ -69,45 +69,45 @@ components
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/actualPollutionIn")
-    public JsonObject getPollutionDataByName(@QueryParam("cityName") String city){
+    public String getPollutionDataByName(@QueryParam("cityName") String city){
         //get lat and lon from our WS
         final Response response = jwt.queryParam("cityName",city).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         float lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
         float lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
 
-        return getPollutionData(lat, lon);
+        return getPollutionData(lat, lon).toString();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/HistoryPollutionIn")
-    public JsonObject getHistoryPollutionDataByName(@QueryParam("cityName") String city,@QueryParam("startDate") int start,@QueryParam("endDate") int end){
+    public String getHistoryPollutionDataByName(@QueryParam("cityName") String city,@QueryParam("startDate") int start,@QueryParam("endDate") int end){
         //get lat and lon from our WS
         final Response response = jwt.queryParam("cityName",city).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         float lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
         float lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
-        return getHistoryPollutionData(lat, lon, start, end);
+        return getHistoryPollutionData(lat, lon, start, end).toString();
     }
 
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getHistoryPollutionData(float lat, float lon, int start, int end) {
+    public JsonArray getHistoryPollutionData(float lat, float lon, int start, int end) {
 
         final Response response = hwt.queryParam("lat",lat).queryParam("lon",lon).queryParam("start",start).queryParam("end",end).queryParam("appid", APIKEY).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
-        final JsonObject componentData = jsonObject.getJsonArray("list").getJsonObject(0).getJsonObject("components");
+        final JsonArray componentData = jsonObject.getJsonArray("list");
         //Rückgabe prüfen
         return componentData;
     }
 
 
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getPollutionData(float lat, float lon) {
+    public JsonArray getPollutionData(float lat, float lon) {
 
         final Response response = pwt.queryParam("lat",lat).queryParam("lon",lon).queryParam("appid", APIKEY).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
-        final JsonObject componentData = jsonObject.getJsonArray("list").getJsonObject(0).getJsonObject("components");
+        final JsonArray componentData = jsonObject.getJsonArray("list");
         return componentData;
     }
 }
