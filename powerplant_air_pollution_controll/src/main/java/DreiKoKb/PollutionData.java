@@ -28,24 +28,25 @@ public class PollutionData {
      * "http://api.openweathermap.org/data/2.5/air_pollution/history"
      */ "http://api.openweathermap.org/data/2.5/air_pollution/history";
 
-    private static final String JUS_URL = /*
+    private static final String CIT_URL = /*
      * "http://localhost:7353/cityconvert/city"
-     */ //"http://localhost:7353/cityconvert/city";
-            "http://10.50.15.51:7353/cityconvert/city";
+     */ "http://10.50.15.51:7353/cityconvert/city";
+
+    private static final String COO_URL = /*
+     * "http://localhost:7353/cityconvert/city"
+     */ "http://10.50.15.51:7353/cityconvert/coord";
+
 
     // APIKEY: 2f102b6aceecd97fb83b1fc6dfa15023 //
     private static final String APIKEY = /*
      * "2f102b6aceecd97fb83b1fc6dfa15023"
      */ "2f102b6aceecd97fb83b1fc6dfa15023";
 
-    private final WebTarget pwt;
-    private final WebTarget hwt;
-    private final ResteasyWebTarget jwt;
-/*
-    Standard Lookup: Look up the data behind an IP address.
-    Bulk Lookup: Look up the data behind multiple IP addresses at once.
-    Requester Lookup: Look up the data behind the IP address your API request is coming from.
-*/
+    private final WebTarget pwt; //actual Pollutiondata from OpenWeather
+    private final WebTarget hwt; //history Pollutiondata from OpenWeather
+    private final ResteasyWebTarget iwt; //coords by Name from our WS
+    private final ResteasyWebTarget owt; //coords by coords from our ws
+
     /*
 components
 
@@ -64,18 +65,19 @@ components
         final ResteasyClient rClient = new ResteasyClientBuilderImpl().build();
         pwt = client.target(POL_URL);
         hwt = client.target(HIS_URL);
-        jwt = rClient.target(JUS_URL);
+        iwt = rClient.target(CIT_URL);
+        owt = rClient.target(Coo_URL);
     }
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/actualPollutionIn")
     public String getPollutionDataByName(@QueryParam("cityName") String city){
         //get lat and lon from our WS
-        final Response response = jwt.queryParam("cityName",city).request(MediaType.APPLICATION_JSON).get();
+        final Response response = iwt.queryParam("cityName",city).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         float lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
         float lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
-
+        //get and return pollutiondata
         return getPollutionData(lat, lon).toString();
     }
 
@@ -84,10 +86,11 @@ components
     @Path("/HistoryPollutionIn")
     public String getHistoryPollutionDataByName(@QueryParam("cityName") String city,@QueryParam("startDate") int start,@QueryParam("endDate") int end){
         //get lat and lon from our WS
-        final Response response = jwt.queryParam("cityName",city).request(MediaType.APPLICATION_JSON).get();
+        final Response response = iwt.queryParam("cityName",city).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         float lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
         float lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
+        //get and return pollutiondata
         return getHistoryPollutionData(lat, lon, start, end).toString();
     }
 
@@ -95,6 +98,12 @@ components
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/actualPollutionCoord")
     public String getPollutionDataByName(@QueryParam("lat") float lat, @QueryParam("lon") float lon){
+        //get correct Coords from WS for OpenWeatherMap
+        final Response response = owt.queryParam("lat",lat).queryParam("lon",lon).request(MediaType.APPLICATION_JSON).get();
+        final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
+        float lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
+        float lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
+        //get and return pollutiondata
         return getPollutionData(lat, lon).toString();
     }
 
@@ -102,23 +111,33 @@ components
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/HistoryPollutionCoord")
     public String getHistoryPollutionDataByName(@QueryParam("lat") float lat, @QueryParam("lon") float lon,@QueryParam("startDate") int start,@QueryParam("endDate") int end){
+        //get correct Coords from WS for OpenWeatherMap
+        final Response response = owt.queryParam("lat",lat).queryParam("lon",lon).request(MediaType.APPLICATION_JSON).get();
+        final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
+        float lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
+        float lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
+        //get and return pollutiondata
         return getHistoryPollutionData(lat, lon, start, end).toString();
     }
 
     @Produces(MediaType.APPLICATION_JSON)
     public JsonArray getHistoryPollutionData(float lat, float lon, int start, int end) {
+        //get Data from OpenWeatherMap
         final Response response = hwt.queryParam("lat",lat).queryParam("lon",lon).queryParam("start",start).queryParam("end",end).queryParam("appid", APIKEY).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         final JsonArray componentData = jsonObject.getJsonArray("list");
+        //return pollutiondata
         return componentData;
     }
 
 
     @Produces(MediaType.APPLICATION_JSON)
     public JsonArray getPollutionData(float lat, float lon) {
+        //get Data from OpenWeatherMap
         final Response response = pwt.queryParam("lat",lat).queryParam("lon",lon).queryParam("appid", APIKEY).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         final JsonArray componentData = jsonObject.getJsonArray("list");
+        //return pollutiondata
         return componentData;
     }
 }
