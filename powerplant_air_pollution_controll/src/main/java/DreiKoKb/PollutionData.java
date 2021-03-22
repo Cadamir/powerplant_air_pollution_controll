@@ -66,7 +66,7 @@ components
         pwt = client.target(POL_URL);
         hwt = client.target(HIS_URL);
         iwt = rClient.target(CIT_URL);
-        owt = rClient.target(Coo_URL);
+        owt = rClient.target(COO_URL);
     }
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -101,8 +101,8 @@ components
         //get correct Coords from WS for OpenWeatherMap
         final Response response = owt.queryParam("lat",lat).queryParam("lon",lon).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
-        float lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
-        float lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
+        lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
+        lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
         //get and return pollutiondata
         return getPollutionData(lat, lon).toString();
     }
@@ -114,8 +114,8 @@ components
         //get correct Coords from WS for OpenWeatherMap
         final Response response = owt.queryParam("lat",lat).queryParam("lon",lon).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
-        float lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
-        float lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
+        lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
+        lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
         //get and return pollutiondata
         return getHistoryPollutionData(lat, lon, start, end).toString();
     }
