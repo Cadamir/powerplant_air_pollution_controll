@@ -168,7 +168,7 @@ components:
         no2:
           type: number
           format: float
-          description: concentration of nitrogen dinoxide
+          description: concentration of nitrogen dioxide
         o3:
           type: number
           format: float
@@ -176,7 +176,7 @@ components:
         so2:
           type: number
           format: float
-          description: concentration of sulphur dinoxide
+          description: concentration of sulphur dioxide
         pm2_5:
           type: number
           format: float
@@ -184,7 +184,7 @@ components:
         pm10:
           type: number
           format: float
-          description: concentration of coarse particulate matte
+          description: concentration of coarse particulate matter
         nh3:
           type: number
           format: float
