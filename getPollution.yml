@@ -1,0 +1,197 @@
+openapi: 3.0.1
+info:
+  title: AirPollutionService
+  description: get Airpollution for city by name or coordinates
+  version: 1.0.0
+servers:
+- url: http://10.50.15.51:7352/pol
+tags:
+- name: AirPollutionService
+paths:
+  /actualPollutionIn:
+    get:
+      tags:
+      - AirPollutionService
+      summary: get the actual pollutiondata by cityname
+      parameters:
+      - name: cityName
+        in: query
+        description: Name of the city
+        required: true
+        style: form
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PollutionData'
+  /HistoryPollutionIn:
+    get:
+      tags:
+      - AirPollutionService
+      summary: get the history pollutiondata by cityname
+      parameters:
+      - name: cityName
+        in: query
+        description: Name of the city
+        required: true
+        style: form
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        description: startdate of interval in unix time format
+        required: true
+        style: form
+        schema:
+          type: number
+      - name: endDate
+        in: query
+        description: enddate of interval in unix time format
+        required: true
+        style: form
+        schema:
+          type: number
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PollutionData'
+  /actualPollutionCoord:
+    get:
+      tags:
+      - AirPollutionService
+      summary: get the actual pollutiondata by longitude and latitude
+      parameters:
+      - name: lon
+        in: query
+        description: Longitude of the city
+        required: true
+        style: form
+        schema:
+          type: number
+          format: float
+      - name: lat
+        in: query
+        description: Longitude of the city
+        required: true
+        style: form
+        schema:
+          type: number
+          format: float
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PollutionData'
+  /HistoryPollutionCoord:
+    get:
+      tags:
+      - AirPollutionService
+      summary: get the history pollutiondata by longitude and latitude
+      parameters:
+      - name: lon
+        in: query
+        description: Longitude of the city
+        required: true
+        style: form
+        schema:
+          type: number
+          format: float
+      - name: lat
+        in: query
+        description: Longitude of the city
+        required: true
+        style: form
+        schema:
+          type: number
+          format: float
+      - name: startDate
+        in: query
+        description: startdate of interval in unix time format
+        required: true
+        style: form
+        schema:
+          type: number
+      - name: endDate
+        in: query
+        description: enddate of interval in unix time format
+        required: true
+        style: form
+        schema:
+          type: number
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PollutionData'
+components:
+  schemas:
+    PollutionData:
+      type: object
+      properties:
+        main:
+            $ref: '#/components/schemas/main'
+        components:
+            $ref: '#/components/schemas/Components'
+        dt:
+         description: date in unix format
+         type: number
+    Components:
+      type: object
+      properties:
+        co:
+          type: number
+          format: float
+          description: concentration of carbon monoxide
+        no:
+          type: number
+          format: float
+          description: concentration of nitrogen monoxide
+        no2:
+          type: number
+          format: float
+          description: concentration of nitrogen dinoxide
+        o3:
+          type: number
+          format: float
+          description: concentration of ozone
+        so2:
+          type: number
+          format: float
+          description: concentration of sulphur dinoxide
+        pm2_5:
+          type: number
+          format: float
+          description: concentration of fine particles matter
+        pm10:
+          type: number
+          format: float
+          description: concentration of coarse particulate matte
+        nh3:
+          type: number
+          format: float
+          description: concentration of ammonia
+    main:
+      type: object
+      properties:
+        aqi:
+          type: integer
+          description: Air Quality Index
