@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import DreiKoKb.Model.City;
 import org.json.JSONObject;
 
 @Path("/cityconvert")
@@ -60,7 +61,7 @@ public class CityConverter {
     @GET
     @Path("/coord")
     @Produces(MediaType.APPLICATION_JSON)
-    public String nearestCity(@QueryParam("lat") double lati, @QueryParam("lon") double longi){
+    public JSONObject nearestCity(@QueryParam("lat") double lati, @QueryParam("lon") double longi){
         StringBuilder response = new StringBuilder();
         try{
             InputStream in = getClass().getResourceAsStream(germanCityChangerFile);
@@ -96,9 +97,9 @@ public class CityConverter {
                 response.append(myReader.readLine());
             }
         }catch (Exception e){
-            return e.getMessage();
+            response.append(e.getMessage());
         }
-        return  (response.toString());
+        return  new JSONObject(new City(response.toString()));
     }
 
     @Path("/city")
@@ -134,9 +135,8 @@ public class CityConverter {
             response = new StringBuilder(
                     "{\n" + "\"id\": -1,\n" + "\"name\": \"-1\",\n" + "\"state\": \"-1\",\n" + "\"country\": \"-1\",\n" + "\"coord\": {\n" + "\"lon\": -1.0,\n" + "\"lat\": -1.0\n" + "}\n" + "}"
             );
-            JSONObject object = new JSONObject(response.toString());
+            JSONObject object = new JSONObject(new City(response.toString()));
             return Response.ok(object.toString()).build();
         }
-
     }
 }
