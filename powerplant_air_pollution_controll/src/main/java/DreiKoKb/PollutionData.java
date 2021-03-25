@@ -77,6 +77,9 @@ components
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         float lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
         float lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
+        if(response != null){
+            response.close(); //close connection
+        }
         //get and return pollutiondata
         return getPollutionData(lat, lon).toString();
     }
@@ -90,6 +93,9 @@ components
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         float lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
         float lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
+        if(response != null){
+            response.close(); //close connection
+        }
         //get and return pollutiondata
         return getHistoryPollutionData(lat, lon, start, end).toString();
     }
@@ -103,6 +109,9 @@ components
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
         lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
+        if(response != null){
+            response.close(); //close connection
+        }
         //get and return pollutiondata
         return getPollutionData(lat, lon).toString();
     }
@@ -116,6 +125,9 @@ components
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         lat = (float) jsonObject.getJsonObject("coord").getJsonNumber("lat").doubleValue();
         lon = (float) jsonObject.getJsonObject("coord").getJsonNumber("lon").doubleValue();
+        if(response != null){
+            response.close(); //close connection
+        }
         //get and return pollutiondata
         return getHistoryPollutionData(lat, lon, start, end).toString();
     }
@@ -126,6 +138,9 @@ components
         final Response response = hwt.queryParam("lat",lat).queryParam("lon",lon).queryParam("start",start).queryParam("end",end).queryParam("appid", APIKEY).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         final JsonArray componentData = jsonObject.getJsonArray("list");
+        if(response != null){
+            response.close(); //close connection
+        }
         //return pollutiondata
         return componentData;
     }
@@ -137,6 +152,9 @@ components
         final Response response = pwt.queryParam("lat",lat).queryParam("lon",lon).queryParam("appid", APIKEY).request(MediaType.APPLICATION_JSON).get();
         final JsonObject jsonObject = Json.createReader(response.readEntity(InputStream.class)).readObject();
         final JsonArray componentData = jsonObject.getJsonArray("list");
+        if(response != null){
+            response.close(); //close connection
+        }
         //return pollutiondata
         return componentData;
     }
