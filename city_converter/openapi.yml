@@ -1,0 +1,78 @@
+openapi: "3.0.3"
+info:
+  title: CityConvert
+  description: get Airpollution for city by name or coordinates
+  version: "0.9"
+servers:
+- url: http://10.50.15.51:7353/cityconvert
+tags:
+- name: CityConvert
+paths:
+  /city:
+    get:
+      tags:
+      - CityConvert
+      summary: get citydata by cityname
+      parameters:
+      - name: cityName
+        in: query
+        description: Name of the city
+        required: true
+        style: from
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/city'
+  /coord:
+    get:
+      tags:
+      - CityConvert
+      summary: get citydata by coordinates
+      parameters:
+      - name: lat
+        in: query
+        required: true
+        schema:
+          format: double
+          type: number
+      - name: lon
+        in: query
+        required: true
+        schema:
+          format: double
+          type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/city'
+components:
+  schemas:
+    city:
+      type: object
+      properties:
+        id:
+          format: long
+          type: number
+        cityName:
+          format: text
+          type: string
+        country:
+          type: string
+        coord:
+          type: object
+          properties:
+            lat:
+              format: double
+              type: number
+            lon:
+              format: double
+              type: number
+                      
