@@ -1,7 +1,0 @@
-18.03.2021
-	-Treffen des Teams, um Themenfestlegung, Aufgaben verteilung und Projekt-Initiirung zu starten
-	-Aufgabenverteilung:
-		-Maximilian #Hausnkecht: GUI
-		-Maik Blümel: Open-Weather-API einbinden
-		-Justin Unger: City-Converter-Service erstellen, zweit-API anfragen
-
